@@ -142,8 +142,8 @@ export default function Home() {
         {/* Market Stats */}
         <div className="mt-12 grid gap-6 sm:grid-cols-2 max-w-xl mx-auto">
           <MarketStat
-            title="Current Price"
-            value="$1.05"
+            title="Current Leap Price"
+            value="1.05 USD"
             change="+12.5%"
             icon={TrendingUp}
           />
