@@ -219,7 +219,7 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="container px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <section className="m-auto container px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           <Card className="overflow-hidden transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.5)]">
             <CardContent className="p-6 bg-background/60 backdrop-blur-sm space-y-2">
@@ -255,7 +255,7 @@ export default function Home() {
       </section>
 
       {/* Tokenomics Section */}
-      <section className="container px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <section className="m-auto container px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold">Tokenomics</h2>
           <p className="mt-4 text-base sm:text-lg text-muted-foreground">
@@ -299,7 +299,7 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="container px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <section className="m-auto container px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">
           How It Works
         </h2>
