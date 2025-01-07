@@ -38,7 +38,7 @@ export default function Home() {
   const handleSwap = () => {
     setIsReversed(!isReversed);
   };
-
+  const LEAP_PRICE = 1.05;
   const FirstToken = () => (
     <TokenInput
       label={isReversed ? "You receive" : "You pay"}
@@ -56,7 +56,7 @@ export default function Home() {
       balance={`${amount} ${isReversed ? "USDT" : "LEAP"}`}
       token={isReversed ? "USDT" : "LEAP"}
       tokenIcon={isReversed ? "💵" : "🔷"}
-      amount={amount}
+      amount={isReversed ? amount * LEAP_PRICE : amount / LEAP_PRICE}
       setAmount={setAmount}
     />
   );
@@ -83,7 +83,7 @@ export default function Home() {
 
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
-  const { writeContract: swapContract } = useWriteContract();
+  const { writeContract: swapContract, isSuccess } = useWriteContract();
   const { writeContract: approveContract } = useWriteContract();
 
   // useEffect(() => {
@@ -147,7 +147,7 @@ export default function Home() {
             change="+12.5%"
             icon={TrendingUp}
           />
-          <MarketStat title="Market Cap" value="$130.7M" icon={DollarSign} />
+          <MarketStat title="Market Cap" value="$525M" icon={DollarSign} />
         </div>
 
         {/* Exchange Interface */}
@@ -167,8 +167,9 @@ export default function Home() {
               </div>
               <SecondToken />
               <div className="text-sm text-center text-muted-foreground">
-                1 {isReversed ? "USDT" : "LEAP"} = 1{" "}
-                {isReversed ? "LEAP" : "USDT"}
+                1 {!isReversed ? "USDT" : "LEAP"} ={" "}
+                {!isReversed ? 1 / LEAP_PRICE : 1.05}{" "}
+                {!isReversed ? "LEAP" : "USDT"}
               </div>
               <Button
                 className="w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:bg-gradient-to-r hover:from-blue-700 hover:to-blue-900 transition-all duration-300 text-white"
@@ -179,15 +180,15 @@ export default function Home() {
                     await approveContract({
                       abi: usdtAbi,
                       address: isReversed
-                        ? USDT_CONTRACT_ADDRESS
-                        : LEAP_CONTRACT_ADDRESS,
+                        ? LEAP_CONTRACT_ADDRESS
+                        : USDT_CONTRACT_ADDRESS,
                       functionName: "approve",
                       args: [
                         SWAP_TRADE_CONTRACT_ADDRESS,
                         parseUnits(amount.toString(), 6),
                       ],
                     });
-
+                    await new Promise((resolve) => setTimeout(resolve, 3000));
                     // Then perform the swap
                     await swapContract({
                       abi: swapTradeAbi,
@@ -202,7 +203,7 @@ export default function Home() {
                   }
                 }}
               >
-                {isReversed ? "Sell" : "Buy"} LEAP
+                {isReversed ? "Redeem" : "Buy"} LEAP
               </Button>
               <div className="text-xs text-center text-muted-foreground">
                 Transaction fee: 0.3%
