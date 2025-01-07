@@ -126,11 +126,11 @@ export default function Home() {
     }
   };
   return (
-    <div className="min-h-screen bg-background dark:bg-black">
+    <div className="min-h-screen bg-background dark:bg-black w-full">
       <Navbar />
 
       {/* Hero Section */}
-      <section className="container px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 pb-12 text-center">
+      <section className="m-auto container px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 pb-12 text-center">
         <h1 className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter text-transparent sm:text-7xl">
           The Future of DeFi Trading
         </h1>
