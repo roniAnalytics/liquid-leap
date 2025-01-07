@@ -41,7 +41,7 @@ export default function Home() {
   const LEAP_PRICE = 1.05;
   const FirstToken = () => (
     <TokenInput
-      label={isReversed ? "You receive" : "You pay"}
+      label={"You pay"}
       balance={`${amount} ${isReversed ? "LEAP" : "USDT"}`}
       token={isReversed ? "LEAP" : "USDT"}
       tokenIcon={isReversed ? "🔷" : "💵"}
@@ -52,7 +52,7 @@ export default function Home() {
 
   const SecondToken = () => (
     <TokenInput
-      label={isReversed ? "You pay" : "You receive"}
+      label={"You receive"}
       balance={`${amount} ${isReversed ? "USDT" : "LEAP"}`}
       token={isReversed ? "USDT" : "LEAP"}
       tokenIcon={isReversed ? "💵" : "🔷"}
