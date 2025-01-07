@@ -140,14 +140,19 @@ export default function Home() {
         </p>
 
         {/* Market Stats */}
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 max-w-xl mx-auto">
+        <div className="mt-12 grid gap-6 sm:grid-cols-3 max-w-2xl mx-auto">
           <MarketStat
             title="Current Leap Price"
             value="1.05 USD"
-            change="+12.5%"
+            // change="+12.5%"
             icon={TrendingUp}
           />
-          <MarketStat title="Market Cap" value="$525M" icon={DollarSign} />
+          <MarketStat title="Market Cap" value="$105M" icon={DollarSign} />
+          <MarketStat
+            title="Circulating Supply"
+            value="$100M"
+            icon={DollarSign}
+          />
         </div>
 
         {/* Exchange Interface */}
