@@ -126,7 +126,7 @@ export default function Home() {
     }
   };
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background dark:bg-black">
       <Navbar />
 
       {/* Hero Section */}
@@ -159,7 +159,7 @@ export default function Home() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-full text-black"
+                  className="rounded-full text-neutral-900 dark:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800"
                   onClick={handleSwap}
                 >
                   <ArrowUpDown className="h-4 w-4" />

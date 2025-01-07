@@ -7,7 +7,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export function Navbar() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-white/80 backdrop-blur-sm dark:bg-neutral-950/80">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-white/80 backdrop-blur-sm dark:bg-black/80 dark:border-neutral-800">
       <div className="container px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between">
         <Link href="https://liquidleap.ai" target="_blank" className="flex items-center space-x-2">
           <Image
@@ -15,9 +15,16 @@ export function Navbar() {
             alt="Leap Logo"
             width={32}
             height={32}
-            className="h-8 w-8"
+            className="h-8 w-8 block dark:hidden"
           />
-          <span className="text-xl sm:text-2xl font-bold text-white">Leap</span>
+          <Image
+            src="/logo-light.svg"
+            alt="Leap Logo"
+            width={32}
+            height={32}
+            className="h-8 w-8 hidden dark:block"
+          />
+          <span className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white">Leap</span>
         </Link>
         <div className="flex items-center space-x-4">
           <ConnectButton />
