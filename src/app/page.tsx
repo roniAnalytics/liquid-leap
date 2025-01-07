@@ -24,7 +24,13 @@ import {
 } from "@/lib/constants";
 import { abi as usdtAbi } from "@/lib/usdtAbi";
 import { USDT_CONTRACT_ADDRESS } from "@/lib/constants";
-import { usePublicClient, useWalletClient, useWriteContract } from "wagmi";
+import {
+  usePublicClient,
+  useWalletClient,
+  useWriteContract,
+  useAccount,
+  useBalance,
+} from "wagmi";
 
 declare global {
   interface Window {
@@ -39,10 +45,37 @@ export default function Home() {
     setIsReversed(!isReversed);
   };
   const LEAP_PRICE = 1.05;
+  const { address } = useAccount();
+
+  // Fetch USDT balance
+  const { data: usdtBalance, refetch: refetchUsdtBalance } = useBalance({
+    address,
+    token: USDT_CONTRACT_ADDRESS,
+    // watch: true,
+  });
+
+  // Fetch LEAP balance
+  const { data: leapBalance, refetch: refetchLeapBalance } = useBalance({
+    address,
+    token: LEAP_CONTRACT_ADDRESS,
+    // watch: true,
+  });
+
+  useEffect(() => {
+    setTimeout(() => {
+      refetchUsdtBalance();
+      refetchLeapBalance();
+    }, 5000);
+  }, []);
+
   const FirstToken = () => (
     <TokenInput
-      label={isReversed ? "You receive" : "You pay"}
-      balance={`${amount} ${isReversed ? "LEAP" : "USDT"}`}
+      label={"You pay"}
+      balance={
+        isReversed
+          ? leapBalance?.formatted ?? "0"
+          : usdtBalance?.formatted ?? "0"
+      }
       token={isReversed ? "LEAP" : "USDT"}
       tokenIcon={isReversed ? "🔷" : "💵"}
       amount={amount}
@@ -52,8 +85,12 @@ export default function Home() {
 
   const SecondToken = () => (
     <TokenInput
-      label={isReversed ? "You pay" : "You receive"}
-      balance={`${amount} ${isReversed ? "USDT" : "LEAP"}`}
+      label={"You receive"}
+      balance={
+        isReversed
+          ? usdtBalance?.formatted ?? "0"
+          : leapBalance?.formatted ?? "0"
+      }
       token={isReversed ? "USDT" : "LEAP"}
       tokenIcon={isReversed ? "💵" : "🔷"}
       amount={isReversed ? amount * LEAP_PRICE : amount / LEAP_PRICE}
