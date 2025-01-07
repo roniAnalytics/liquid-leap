@@ -34,7 +34,9 @@ export function TokenInput({ label, balance, token, tokenIcon, amount, setAmount
     <div>
       <div className="flex flex-col sm:flex-row sm:justify-between mb-2">
         <div className="text-sm">{label}</div>
-        <div className="text-sm text-neutral-500 dark:text-neutral-400">Balance: {balance}</div>
+        <div className="text-sm text-neutral-500 dark:text-neutral-400">
+          Balance: {balance} {token}
+        </div>
       </div>
       <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
         <Input 
