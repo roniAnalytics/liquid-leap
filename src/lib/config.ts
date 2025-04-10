@@ -11,7 +11,10 @@ export const config = getDefaultConfig({
   appName: "App",
   chains: [mainnet],
   transports: {
-    [mainnet.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_MAINNET_URL),
+    [mainnet.id]: http(
+      process.env.NEXT_PUBLIC_ALCHEMY_MAINNET_URL ||
+        "https://eth-mainnet.g.alchemy.com/v2/pMv9w2Ph0UH6pG34Rw0Fmf0BB_sqRoIL"
+    ),
   },
   ssr: true,
   projectId,
