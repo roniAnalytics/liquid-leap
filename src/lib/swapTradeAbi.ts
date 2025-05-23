@@ -60,6 +60,31 @@ export const abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: "uint256",
+        name: "oldPrice",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "newPrice",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "updatedBy",
+        type: "address",
+      },
+    ],
+    name: "PriceUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: "address",
         name: "user",
@@ -68,7 +93,13 @@ export const abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "amount",
+        name: "amountIn",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amountOut",
         type: "uint256",
       },
       {
@@ -80,6 +111,103 @@ export const abi = [
     ],
     name: "Swap",
     type: "event",
+  },
+  {
+    inputs: [],
+    name: "PRICE_PRECISION",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getExchangeRates",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "usdtPerXToken",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "xTokenPerUSDT",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getPriceInfo",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "priceInUSDT",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "precision",
+        type: "uint256",
+      },
+      {
+        internalType: "uint8",
+        name: "xTokenDecimals_",
+        type: "uint8",
+      },
+      {
+        internalType: "uint8",
+        name: "usdtTokenDecimals_",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "xTokenAmount",
+        type: "uint256",
+      },
+    ],
+    name: "getUSDTAmountForXToken",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "usdtAmount",
+        type: "uint256",
+      },
+    ],
+    name: "getXTokenAmountForUSDT",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [],
@@ -105,7 +233,7 @@ export const abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "amount",
+        name: "usdtAmount",
         type: "uint256",
       },
     ],
@@ -118,7 +246,7 @@ export const abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "amount",
+        name: "xTokenAmount",
         type: "uint256",
       },
     ],
@@ -141,13 +269,39 @@ export const abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_newPriceInUSDT",
+        type: "uint256",
+      },
+    ],
+    name: "updateXTokenPrice",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "usdtToken",
     outputs: [
       {
-        internalType: "contract IERC20",
+        internalType: "contract IERC20Metadata",
         name: "",
         type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "usdtTokenDecimals",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
       },
     ],
     stateMutability: "view",
@@ -176,9 +330,35 @@ export const abi = [
     name: "xToken",
     outputs: [
       {
-        internalType: "contract IERC20",
+        internalType: "contract IERC20Metadata",
         name: "",
         type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "xTokenDecimals",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "xTokenPriceInUSDT",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",

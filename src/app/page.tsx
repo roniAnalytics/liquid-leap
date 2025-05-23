@@ -20,10 +20,11 @@ import { abi as swapTradeAbi } from "@/lib/swapTradeAbi";
 import { ethers, parseUnits } from "ethers";
 import {
   LEAP_CONTRACT_ADDRESS,
+  LEAP_PRICE,
   SWAP_TRADE_CONTRACT_ADDRESS,
 } from "@/lib/constants";
 import { abi as usdtAbi } from "@/lib/usdtAbi";
-import { USDT_CONTRACT_ADDRESS } from "@/lib/constants";
+import { USDC_CONTRACT_ADDRESS } from "@/lib/constants";
 import {
   usePublicClient,
   useWalletClient,
@@ -45,13 +46,13 @@ export default function Home() {
   const handleSwap = () => {
     setIsReversed(!isReversed);
   };
-  const LEAP_PRICE = 1.05;
+
   const { address } = useAccount();
 
   // Fetch USDT balance
   const { data: usdtBalance, refetch: refetchUsdtBalance } = useBalance({
     address,
-    token: USDT_CONTRACT_ADDRESS,
+    token: USDC_CONTRACT_ADDRESS,
     // watch: true,
   });
 
@@ -77,7 +78,7 @@ export default function Home() {
           ? leapBalance?.formatted ?? "0"
           : usdtBalance?.formatted ?? "0"
       }
-      token={isReversed ? "LEAP" : "USDT"}
+      token={isReversed ? "LEAP" : "USDC"}
       tokenIcon={isReversed ? "🔷" : "💵"}
       amount={amount}
       setAmount={setAmount}
@@ -92,7 +93,7 @@ export default function Home() {
           ? usdtBalance?.formatted ?? "0"
           : leapBalance?.formatted ?? "0"
       }
-      token={isReversed ? "USDT" : "LEAP"}
+      token={isReversed ? "USDC" : "LEAP"}
       tokenIcon={isReversed ? "💵" : "🔷"}
       amount={isReversed ? amount * LEAP_PRICE : amount / LEAP_PRICE}
       setAmount={setAmount}
@@ -106,7 +107,7 @@ export default function Home() {
       signer
     );
     const usdcContract = new ethers.Contract(
-      USDT_CONTRACT_ADDRESS as string,
+      USDC_CONTRACT_ADDRESS as string,
       usdtAbi,
       signer
     );
@@ -181,7 +182,7 @@ export default function Home() {
         <div className="mt-12 grid gap-6 sm:grid-cols-2 max-w-2xl mx-auto">
           <MarketStat
             title="Current Leap Price"
-            value="1.05 USD"
+            value={`${LEAP_PRICE} USD`}
             // change="+12.5%"
             icon={TrendingUp}
           />
@@ -210,9 +211,9 @@ export default function Home() {
               </div>
               <SecondToken />
               <div className="text-sm text-center text-muted-foreground">
-                1 {!isReversed ? "USDT" : "LEAP"} ={" "}
-                {!isReversed ? 1 / LEAP_PRICE : 1.05}{" "}
-                {!isReversed ? "LEAP" : "USDT"}
+                1 {!isReversed ? "USDC" : "LEAP"} ={" "}
+                {!isReversed ? 1 / LEAP_PRICE : LEAP_PRICE}{" "}
+                {!isReversed ? "LEAP" : "USDC"}
               </div>
               <Button
                 className="w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:bg-gradient-to-r hover:from-blue-700 hover:to-blue-900 transition-all duration-300 text-white"
@@ -224,11 +225,11 @@ export default function Home() {
                       abi: usdtAbi,
                       address: isReversed
                         ? LEAP_CONTRACT_ADDRESS
-                        : USDT_CONTRACT_ADDRESS,
+                        : USDC_CONTRACT_ADDRESS,
                       functionName: "approve",
                       args: [
                         SWAP_TRADE_CONTRACT_ADDRESS,
-                        parseUnits(amount.toString(), 6),
+                        parseUnits(amount.toString(), isReversed ? 18 : 6),
                       ],
                     });
                     await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -239,7 +240,9 @@ export default function Home() {
                       functionName: isReversed
                         ? "swapXTokenForUSDT"
                         : "swapUSDTForXToken",
-                      args: ["1"],
+                      args: [
+                        parseUnits(amount.toString(), isReversed ? 18 : 6),
+                      ],
                     });
                   } catch (error) {
                     console.error("Transaction failed:", error);
