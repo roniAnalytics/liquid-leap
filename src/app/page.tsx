@@ -31,6 +31,7 @@ import {
   useWriteContract,
   useAccount,
   useBalance,
+  useWaitForTransactionReceipt,
 } from "wagmi";
 import { Footer } from "@/components/footer";
 
@@ -43,6 +44,8 @@ export default function Home() {
   const [isReversed, setIsReversed] = useState(false);
   const [amount, setAmount] = useState<number>(0);
   const [signer, setSigner] = useState<ethers.Signer | null>(null);
+  const [transactionStep, setTransactionStep] = useState<'idle' | 'approving' | 'approved' | 'swapping' | 'completed'>('idle');
+  
   const handleSwap = () => {
     setIsReversed(!isReversed);
   };
@@ -123,7 +126,71 @@ export default function Home() {
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
   const { writeContract: swapContract, isSuccess } = useWriteContract();
-  const { writeContract: approveContract } = useWriteContract();
+  const { writeContract: approveContract, data: approveHash, error: approveError } = useWriteContract();
+  
+  // Wait for approval transaction to be confirmed
+  const { 
+    isLoading: isApprovalConfirming, 
+    isSuccess: isApprovalConfirmed,
+    error: approvalReceiptError 
+  } = useWaitForTransactionReceipt({
+    hash: approveHash,
+  });
+
+  // Auto-execute swap when approval is confirmed
+  useEffect(() => {
+    if (isApprovalConfirmed && transactionStep === 'approving') {
+      setTransactionStep('approved');
+      
+      const executeSwap = async () => {
+        try {
+          setTransactionStep('swapping');
+          
+          await swapContract({
+            abi: swapTradeAbi,
+            address: SWAP_TRADE_CONTRACT_ADDRESS,
+            functionName: isReversed
+              ? "swapXTokenForUSDT"
+              : "swapUSDTForXToken",
+            args: [
+              parseUnits(amount.toString(), isReversed ? 18 : 6),
+            ],
+          });
+          
+          setTransactionStep('completed');
+        } catch (error) {
+          console.error('Swap transaction failed:', error);
+          setTransactionStep('idle');
+        }
+      };
+      
+      executeSwap();
+    }
+  }, [isApprovalConfirmed, transactionStep, swapContract, isReversed, amount]);
+
+  // Handle approval transaction errors
+  useEffect(() => {
+    if (approveError || approvalReceiptError) {
+      setTransactionStep('idle');
+    }
+  }, [approveError, approvalReceiptError]);
+
+  // Reset transaction state after completion
+  useEffect(() => {
+    if (transactionStep === 'completed') {
+      const timer = setTimeout(() => {
+        setTransactionStep('idle');
+      }, 6000);
+      return () => clearTimeout(timer);
+    }
+  }, [transactionStep]);
+
+  // Reset transaction state when amount or direction changes
+  useEffect(() => {
+    if (transactionStep !== 'idle') {
+      setTransactionStep('idle');
+    }
+  }, [amount, isReversed]);
 
   // useEffect(() => {
   //   const setupSigner = async () => {
@@ -218,9 +285,11 @@ export default function Home() {
               <Button
                 className="w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:bg-gradient-to-r hover:from-blue-700 hover:to-blue-900 transition-all duration-300 text-white"
                 size="lg"
+                disabled={transactionStep !== 'idle' && transactionStep !== 'completed'}
                 onClick={async () => {
                   try {
-                    // First approve the token
+                    setTransactionStep('approving');
+                    
                     await approveContract({
                       abi: usdtAbi,
                       address: isReversed
@@ -232,24 +301,17 @@ export default function Home() {
                         parseUnits(amount.toString(), isReversed ? 18 : 6),
                       ],
                     });
-                    await new Promise((resolve) => setTimeout(resolve, 3000));
-                    // Then perform the swap
-                    await swapContract({
-                      abi: swapTradeAbi,
-                      address: SWAP_TRADE_CONTRACT_ADDRESS,
-                      functionName: isReversed
-                        ? "swapXTokenForUSDT"
-                        : "swapUSDTForXToken",
-                      args: [
-                        parseUnits(amount.toString(), isReversed ? 18 : 6),
-                      ],
-                    });
                   } catch (error) {
-                    console.error("Transaction failed:", error);
+                    console.error('Approval transaction failed:', error);
+                    setTransactionStep('idle');
                   }
                 }}
               >
-                {isReversed ? "Redeem" : "Buy"} LEAP
+                {transactionStep === 'idle' && `${isReversed ? "Redeem" : "Buy"} LEAP`}
+                {transactionStep === 'approving' && 'Approving...'}
+                {transactionStep === 'approved' && 'Approval Confirmed'}
+                {transactionStep === 'swapping' && 'Swapping...'}
+                {transactionStep === 'completed' && 'Completed!'}
               </Button>
               <div className="text-xs text-center text-muted-foreground">
                 Transaction fee: 0.3%
